@@ -4,6 +4,28 @@ import ReactDOM from "react-dom";
 import Board from "./board";
 import "./index.css";
 
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [0, 4, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [2, 4, 6],
+    [3, 4, 5],
+    [6, 7, 8]
+  ];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+
+  return null;
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -19,18 +41,19 @@ class Game extends React.Component {
   }
 
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.currentMove + 1);
-    const current = history[history.length - 1];
+    const { history, currentMove, xIsNext } = this.state;
+    const histCopy = history.slice(0, currentMove + 1);
+    const current = histCopy[histCopy.length - 1];
     const squares = current.squares.slice();
     if (squares[i] || calculateWinner(squares)) {
       return;
     }
 
-    squares[i] = this.state.xIsNext ? "X" : "O";
+    squares[i] = xIsNext ? "X" : "O";
     this.setState({
-      history: history.concat({ squares: squares }),
-      currentMove: history.length,
-      xIsNext: !this.state.xIsNext
+      history: histCopy.concat({ squares }),
+      currentMove: histCopy.length,
+      xIsNext: !xIsNext
     });
   }
 
@@ -42,23 +65,25 @@ class Game extends React.Component {
   }
 
   render() {
-    const { history } = this.state;
-    const current = history[this.state.currentMove];
+    const { history, currentMove, xIsNext } = this.state;
+    const current = history[currentMove];
     const winner = calculateWinner(current.squares);
 
     let status;
     if (winner) {
-      status = "Winner: " + winner;
+      status = `Winner: ${winner}`;
     } else {
-      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+      status = `Next player: ${xIsNext ? "X" : "O"}`;
     }
 
-    const moves = history.map((step, moveNum) => {
-      const desc =
-        moveNum !== 0 ? "Go to move #" + moveNum : "Go to game start";
+    const moves = history.map((move, idx) => {
+      const desc = idx !== 0 ? `Go to move #${idx}` : "Go to game start";
       return (
-        <li key={moveNum}>
-          <button onClick={() => this.jumpTo(moveNum)}>{desc}</button>
+        // eslint-disable-next-line react/no-array-index-key
+        <li key={idx}>
+          <button type="button" onClick={() => this.jumpTo(idx)}>
+            {desc}
+          </button>
         </li>
       );
     });
@@ -80,25 +105,3 @@ class Game extends React.Component {
 // ========================================
 
 ReactDOM.render(<Game />, document.getElementById("root"));
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [0, 4, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [2, 4, 6],
-    [3, 4, 5],
-    [6, 7, 8]
-  ];
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-
-  return null;
-}
