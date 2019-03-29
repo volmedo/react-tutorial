@@ -79,8 +79,13 @@ class Game extends React.Component {
     }
 
     const moves = history.map((move, idx) => {
-      const desc =
+      let desc =
         idx !== 0 ? `Go to move #${idx}: ${move.desc}` : "Go to game start";
+
+      if (idx === currentMove) {
+        desc = <b>{desc}</b>;
+      }
+
       return (
         // eslint-disable-next-line react/no-array-index-key
         <li key={idx}>
