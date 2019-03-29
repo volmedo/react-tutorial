@@ -32,6 +32,7 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
+          desc: "",
           squares: Array(9).fill(null)
         }
       ],
@@ -50,8 +51,9 @@ class Game extends React.Component {
     }
 
     squares[i] = xIsNext ? "X" : "O";
+    const desc = `${squares[i]} at (${i % 3}, ${Math.floor(i / 3)})`;
     this.setState({
-      history: histCopy.concat({ squares }),
+      history: histCopy.concat({ desc, squares }),
       currentMove: histCopy.length,
       xIsNext: !xIsNext
     });
@@ -77,7 +79,8 @@ class Game extends React.Component {
     }
 
     const moves = history.map((move, idx) => {
-      const desc = idx !== 0 ? `Go to move #${idx}` : "Go to game start";
+      const desc =
+        idx !== 0 ? `Go to move #${idx}: ${move.desc}` : "Go to game start";
       return (
         // eslint-disable-next-line react/no-array-index-key
         <li key={idx}>
