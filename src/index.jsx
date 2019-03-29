@@ -37,7 +37,8 @@ class Game extends React.Component {
         }
       ],
       currentMove: 0,
-      xIsNext: true
+      xIsNext: true,
+      descendingOrder: false
     };
   }
 
@@ -66,8 +67,15 @@ class Game extends React.Component {
     });
   }
 
+  switchSortOrder() {
+    const { descendingOrder } = this.state;
+    this.setState({
+      descendingOrder: !descendingOrder
+    });
+  }
+
   render() {
-    const { history, currentMove, xIsNext } = this.state;
+    const { history, currentMove, xIsNext, descendingOrder } = this.state;
     const current = history[currentMove];
     const winner = calculateWinner(current.squares);
 
@@ -96,6 +104,10 @@ class Game extends React.Component {
       );
     });
 
+    if (descendingOrder) {
+      moves.reverse();
+    }
+
     return (
       <div className="game">
         <div className="game-board">
@@ -103,6 +115,9 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button type="button" onClick={() => this.switchSortOrder()}>
+            {descendingOrder ? "DESC" : "ASC"}
+          </button>
           <ol>{moves}</ol>
         </div>
       </div>
