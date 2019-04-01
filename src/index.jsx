@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import Board from "./board";
 import "./index.css";
 
+const MAX_MOVES = 9;
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -74,12 +76,14 @@ class Game extends React.Component {
     });
   }
 
-  status(winner) {
+  status(winner, currentMove) {
     const { xIsNext } = this.state;
 
     let status;
     if (winner) {
       status = `Winner: ${xIsNext ? "O" : "X"}`;
+    } else if (currentMove === MAX_MOVES) {
+      status = "It's a tie!";
     } else {
       status = `Next player: ${xIsNext ? "X" : "O"}`;
     }
@@ -129,7 +133,7 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
-          <div>{this.status(winner)}</div>
+          <div>{this.status(winner, currentMove)}</div>
           <button type="button" onClick={() => this.switchSortOrder()}>
             {descendingOrder ? "DESC" : "ASC"}
           </button>
