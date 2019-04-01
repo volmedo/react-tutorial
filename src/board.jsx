@@ -2,9 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 function Square(props) {
-  const { value, onClick } = props;
+  const { value, isWinner, onClick } = props;
+  const className = isWinner ? "square-winner" : "square";
   return (
-    <button type="button" className="square" onClick={onClick}>
+    <button type="button" className={className} onClick={onClick}>
       {value}
     </button>
   );
@@ -12,6 +13,7 @@ function Square(props) {
 
 Square.propTypes = {
   value: PropTypes.string,
+  isWinner: PropTypes.bool.isRequired,
   onClick: PropTypes.func
 };
 
@@ -22,8 +24,15 @@ Square.defaultProps = {
 
 class Board extends React.Component {
   renderSquare(i) {
-    const { squares, onClick } = this.props;
-    return <Square value={squares[i]} onClick={() => onClick(i)} />;
+    const { squares, winner, onClick } = this.props;
+    const isWinner = winner && winner.includes(i);
+    return (
+      <Square
+        value={squares[i]}
+        isWinner={isWinner}
+        onClick={() => onClick(i)}
+      />
+    );
   }
 
   render() {
@@ -41,10 +50,12 @@ class Board extends React.Component {
 
 Board.propTypes = {
   squares: PropTypes.arrayOf(PropTypes.string).isRequired,
+  winner: PropTypes.arrayOf(PropTypes.number),
   onClick: PropTypes.func
 };
 
 Board.defaultProps = {
+  winner: null,
   onClick: () => {}
 };
 
